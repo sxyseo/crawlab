@@ -34,13 +34,7 @@ export default {
     }
   },
   methods: {},
-  async created () {
-    await this.$store.dispatch('setting/getSetting')
-  },
   async mounted () {
-    const res = await this.$request.get('/version')
-    this.version = res.data.data
-    sessionStorage.setItem('v', this.version)
     window.setUseStats = (value) => {
       document.querySelector('.el-message__closeBtn').click()
       if (value === 1) {
@@ -144,5 +138,24 @@ export default {
     background: #f56c6c;
     border-color: #f56c6c;
     color: #fff;
+  }
+
+  .v-tour__target--highlighted {
+    box-shadow: none !important;
+    /*box-shadow: 0 0 0 4px #f56c6c !important;*/
+    border: 3px solid #f56c6c !important;
+  }
+
+  .v-step__button {
+    background: #67c23a !important;
+    border: none !important;
+    color: white !important;
+  }
+
+  .v-step__button:hover {
+    background: #67c23a !important;
+    border: none !important;
+    color: white !important;
+    opacity: 0.9 !important;
   }
 </style>

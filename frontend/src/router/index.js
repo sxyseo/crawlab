@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import store from '../store'
+import request from '../api/request'
 import stats from '../utils/stats'
 
 /* Layout */
@@ -42,35 +44,6 @@ export const constantRouterMap = [
           title: 'Home',
           icon: 'fa fa-home'
         }
-      }
-    ]
-  },
-  {
-    path: '/nodes',
-    component: Layout,
-    meta: {
-      title: 'Node',
-      icon: 'fa fa-server'
-    },
-    children: [
-      {
-        path: '',
-        name: 'NodeList',
-        component: () => import('../views/node/NodeList'),
-        meta: {
-          title: 'Nodes',
-          icon: 'fa fa-server'
-        }
-      },
-      {
-        path: ':id',
-        name: 'NodeDetail',
-        component: () => import('../views/node/NodeDetail'),
-        meta: {
-          title: 'Node Detail',
-          icon: 'fa fa-circle-o'
-        },
-        hidden: true
       }
     ]
   },
@@ -153,21 +126,49 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/sites',
+    path: '/nodes',
     component: Layout,
-    hidden: true,
     meta: {
-      title: 'Site',
-      icon: 'fa fa-sitemap'
+      title: 'Node',
+      icon: 'fa fa-server'
     },
     children: [
       {
         path: '',
-        name: 'SiteList',
-        component: () => import('../views/site/SiteList'),
+        name: 'NodeList',
+        component: () => import('../views/node/NodeList'),
         meta: {
-          title: 'Sites',
-          icon: 'fa fa-sitemap'
+          title: 'Nodes',
+          icon: 'fa fa-server'
+        }
+      },
+      {
+        path: ':id',
+        name: 'NodeDetail',
+        component: () => import('../views/node/NodeDetail'),
+        meta: {
+          title: 'Node Detail',
+          icon: 'fa fa-circle-o'
+        },
+        hidden: true
+      }
+    ]
+  },
+  {
+    path: '/disclaimer',
+    component: Layout,
+    meta: {
+      title: 'Disclaimer',
+      icon: 'fa fa-exclamation-triangle'
+    },
+    children: [
+      {
+        path: '',
+        name: 'Disclaimer',
+        component: () => import('../views/doc/Disclaimer'),
+        meta: {
+          title: 'Disclaimer',
+          icon: 'fa fa-exclamation-triangle'
         }
       }
     ]
@@ -187,25 +188,6 @@ export const constantRouterMap = [
         meta: {
           title: 'Users',
           icon: 'fa fa-user'
-        }
-      }
-    ]
-  },
-  {
-    path: '/disclaimer',
-    component: Layout,
-    meta: {
-      title: 'Disclaimer',
-      icon: 'fa fa-exclamation-triangle'
-    },
-    children: [
-      {
-        path: '',
-        name: 'Disclaimer',
-        component: () => import('../views/doc/Disclaimer'),
-        meta: {
-          title: 'Disclaimer',
-          icon: 'fa fa-exclamation-triangle'
         }
       }
     ]
@@ -257,8 +239,13 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-router.afterEach((to, from, next) => {
+router.afterEach(async (to, from, next) => {
   if (to.path) {
+    await store.dispatch('setting/getSetting')
+    const res = await request.get('/version')
+    const version = res.data.data
+    store.commit('version/SET_VERSION', version)
+    sessionStorage.setItem('v', version)
     stats.sendPv(to.path)
   }
 })

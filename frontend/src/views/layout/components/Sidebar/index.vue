@@ -12,7 +12,13 @@
       :active-text-color="variables.menuActiveText"
       mode="vertical"
     >
-      <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path"/>
+      <sidebar-item
+        v-for="route in routes"
+        :class="route.path.replace('/', '')"
+        :key="route.path"
+        :item="route"
+        :base-path="route.path"
+      />
     </el-menu>
   </el-scrollbar>
 </template>
@@ -49,14 +55,15 @@ export default {
       return !this.sidebar.opened
     },
     version () {
-      return window.sessionStorage.getItem('v')
+      return this.$store.state.version.version || window.sessionStorage.getItem('v')
     }
   },
   data () {
-    return {
-    }
+    return {}
   },
   async created () {
+  },
+  mounted () {
   }
 }
 </script>
